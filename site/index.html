@@ -127,7 +127,7 @@ function onCheckout() {
   var id = $('#student-id')[0].value;
   $('#student-id')[0].value = "";
 
-  $.post("http://localhost:8080", {url: form.url, prop: form.prop, value: id});
+  $.post("http://localhost:8989", {url: form.url, prop: form.prop, value: id});
 
   $('#myModal').modal('hide');
   alertSuccess("You've been checked out!");

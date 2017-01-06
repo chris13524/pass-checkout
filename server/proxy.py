@@ -3,8 +3,10 @@
 from BaseHTTPServer import BaseHTTPRequestHandler,HTTPServer
 from urlparse import urlparse, parse_qs
 import requests
+from signal import signal, SIGPIPE, SIG_DFL
+signal(SIGPIPE,SIG_DFL) 
 
-PORT_NUMBER = 8080
+PORT_NUMBER = 8989
 
 class myHandler(BaseHTTPRequestHandler):
 	
@@ -21,6 +23,7 @@ class myHandler(BaseHTTPRequestHandler):
 
 		# make proxy POST
 		r = requests.post(url, data={prop: value})
+		print r.status_code
 
 		# make response to client
 		self.send_response(200)
