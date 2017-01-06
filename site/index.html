@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
 
@@ -14,26 +15,185 @@
   height: 10rem;
   font-size: 50;
 }
+
+.alert {
+	transform: translateX(-50%);
+	width: 25%;
+	opacity: 0.9;
+}
+
+.alert-container {
+	position: fixed;
+	width: 100%;
+	transform: translateX(50%);
+	top: -100px;
+	z-index: 1000;
+}
+
+@media (max-width:543px){
+	.alert {
+		width: 90%;
+	}
+}
+
+@keyframes flyin {
+	to {top: 1em;}
+}
+
+@keyframes flyout {
+	from {top: 1em;}
+	to {top: -100px;}
+}
 </style>
+
+<!-- libs -->
+<script>
+function alert(type, message, time) {
+	if(typeof time == "undefined") {time = 5;}
+	
+	$('#alert').html(
+		'<div class="alert-container" style="animation: flyin 1s ease forwards, flyout 1s ' + time + 's ease forwards;">' +
+		'    <div class="alert alert-' + type + ' alert-dismissible fade in" role="alert">' +
+		'        <button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+		'            <span aria-hidden="true">&times;</span>' +
+		'        </button>' +
+		'        ' + message +
+		'    </div>' +
+		'</div>'
+	);
+}
+function alertDanger(message, time) {
+	alert('danger', message, time);
+}
+function alertWarning(message, time) {
+	alert('warning', message, time);
+}
+function alertSuccess(message, time) {
+	alert('success', message, time);
+}
+function post(path, params, method) {
+    method = method || "post"; // Set method to post by default if not specified.
+
+    // The rest of this code assumes you are not using a library.
+    // It can be made less wordy if you use one.
+    var form = document.createElement("form");
+    form.setAttribute("method", method);
+    form.setAttribute("action", path);
+
+    for(var key in params) {
+        if(params.hasOwnProperty(key)) {
+            var hiddenField = document.createElement("input");
+            hiddenField.setAttribute("type", "hidden");
+            hiddenField.setAttribute("name", key);
+            hiddenField.setAttribute("value", params[key]);
+
+            form.appendChild(hiddenField);
+         }
+    }
+
+    document.body.appendChild(form);
+    form.submit();
+}
+</script>
+
+<!-- control -->
+<script>
+
+var formData = [
+  {url:"https://docs.google.com/forms/d/e/1FAIpQLSf3GhaS5HpPSu2PNC9kx_YULZ7ufR5Rs-KiDgnhw2239HhKaA/formResponse", prop:"entry.737124594"}
+];
+
+var period;
+var modalShowing;
+
+document.addEventListener("keydown", function (event) {
+  if (modalShowing) {
+    return;
+  }
+  var code = event.keyCode;
+  if (code >= 49 && code <= 57) {
+    onPeriodChoose(code - 48);
+  }
+});
+
+function onPeriodChoose(period) {
+  this.period = period;
+  $('#modal-title').html("Getting pass for period " +  period);
+  $('#myModal').modal('show');
+}
+
+function onCheckout() {
+  var form = formData[period - 1];
+  var id = $('#student-id')[0].value;
+  $('#student-id')[0].value = "";
+
+  $.post("http://localhost:8080", {url: form.url, prop: form.prop, value: id});
+
+  $('#myModal').modal('hide');
+  alertSuccess("You've been checked out!");
+}
+
+</script>
 
 </head>
 <body>
 
+<div id="alert"></div>
+
 <center style="margin-top: 5rem;">
   <h1>Choose your period:</h1>
   <p>
-  <button class="btn btn-primary btn-pd">1</button>
-  <button class="btn btn-primary btn-pd">2</button>
-  <button class="btn btn-primary btn-pd">3</button>
+  <button class="btn btn-primary btn-pd" onClick="onPeriodChoose(1);">1</button>
+  <button class="btn btn-primary btn-pd" onClick="onPeriodChoose(2);">2</button>
+  <button class="btn btn-primary btn-pd" onClick="onPeriodChoose(3);">3</button>
   <br>
-  <button class="btn btn-primary btn-pd">4</button>
-  <button class="btn btn-primary btn-pd">3</button>
-  <button class="btn btn-primary btn-pd">6</button>
+  <button class="btn btn-primary btn-pd" onClick="onPeriodChoose(4);">4</button>
+  <button class="btn btn-primary btn-pd" onClick="onPeriodChoose(5);">3</button>
+  <button class="btn btn-primary btn-pd" onClick="onPeriodChoose(6);">6</button>
   <br>
-  <button class="btn btn-primary btn-pd">7</button>
-  <button class="btn btn-primary btn-pd">8</button>
-  <button class="btn btn-primary btn-pd">9</button>
+  <button class="btn btn-primary btn-pd" onClick="onPeriodChoose(7);">7</button>
+  <button class="btn btn-primary btn-pd" onClick="onPeriodChoose(8);">8</button>
+  <button class="btn btn-primary btn-pd" onClick="onPeriodChoose(9);">9</button>
 </center>
+
+<div class="modal fade" id="myModal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title" id="modal-title"></h4>
+      </div>
+      <div class="modal-body">
+        <p>Enter your student ID number:</p>
+        <form>
+        <div class="form-group">
+          <input type="text" class="form-control" id="student-id"></input>
+        </div>
+        <div class="form-group">
+          <button type="submit" class="btn btn-primary" onClick="onCheckout();">Checkout</button>
+        </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<center>
+(or type the period number)
+<center>
+
+<script>
+$('#student-id')[0].value = "";
+$('#myModal').on('shown.bs.modal', function () {
+  modalShowing = true;
+  $('#student-id').focus();
+});
+$('#myModal').on('hidden.bs.modal', function () {
+  modalShowing = false;
+})
+</script>
 
 </body>
 </html>
