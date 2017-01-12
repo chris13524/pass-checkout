@@ -71,29 +71,6 @@ function alertWarning(message, time) {
 function alertSuccess(message, time) {
 	alert('success', message, time);
 }
-function post(path, params, method) {
-    method = method || "post"; // Set method to post by default if not specified.
-
-    // The rest of this code assumes you are not using a library.
-    // It can be made less wordy if you use one.
-    var form = document.createElement("form");
-    form.setAttribute("method", method);
-    form.setAttribute("action", path);
-
-    for(var key in params) {
-        if(params.hasOwnProperty(key)) {
-            var hiddenField = document.createElement("input");
-            hiddenField.setAttribute("type", "hidden");
-            hiddenField.setAttribute("name", key);
-            hiddenField.setAttribute("value", params[key]);
-
-            form.appendChild(hiddenField);
-         }
-    }
-
-    document.body.appendChild(form);
-    form.submit();
-}
 </script>
 
 <!-- control -->
@@ -148,7 +125,7 @@ function onCheckout() {
   <button class="btn btn-primary btn-pd" onClick="onPeriodChoose(3);">3</button>
   <br>
   <button class="btn btn-primary btn-pd" onClick="onPeriodChoose(4);">4</button>
-  <button class="btn btn-primary btn-pd" onClick="onPeriodChoose(5);">3</button>
+  <button class="btn btn-primary btn-pd" onClick="onPeriodChoose(5);">5</button>
   <button class="btn btn-primary btn-pd" onClick="onPeriodChoose(6);">6</button>
   <br>
   <button class="btn btn-primary btn-pd" onClick="onPeriodChoose(7);">7</button>
@@ -167,14 +144,12 @@ function onCheckout() {
       </div>
       <div class="modal-body">
         <p>Enter your student ID number:</p>
-        <form>
         <div class="form-group">
           <input type="text" class="form-control" id="student-id"></input>
         </div>
         <div class="form-group">
-          <button type="submit" class="btn btn-primary" onClick="onCheckout();">Checkout</button>
+          <button class="btn btn-primary" onClick="onCheckout();">Checkout</button>
         </div>
-        </form>
       </div>
     </div>
   </div>
